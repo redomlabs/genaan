@@ -6,8 +6,8 @@ import { SEED_BUNDLES, SEED_ITEMS, SEED_SETTINGS, SEED_ZONES } from "./seed-data
 import { upsertAdminFromEnv } from "./admin-lib";
 
 const client = createClient({
-  url: process.env.DATABASE_URL || "file:./data/genaan.db",
-  authToken: process.env.DATABASE_AUTH_TOKEN || undefined,
+  url: process.env.DATABASE_URL || process.env.TURSO_DATABASE_URL || "file:./data/genaan.db",
+  authToken: process.env.DATABASE_AUTH_TOKEN || process.env.TURSO_AUTH_TOKEN || undefined,
 });
 const db = drizzle(client, { schema });
 

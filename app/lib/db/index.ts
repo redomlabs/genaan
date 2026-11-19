@@ -7,8 +7,8 @@ export type Database = LibSQLDatabase<typeof schema>;
 const globalForDb = globalThis as unknown as { genaanClient?: Client; genaanDb?: Database };
 
 export function connectionConfig() {
-  const url = process.env.DATABASE_URL || "file:./data/genaan.db";
-  return { url, authToken: process.env.DATABASE_AUTH_TOKEN || undefined };
+  const url = process.env.DATABASE_URL || process.env.TURSO_DATABASE_URL || "file:./data/genaan.db";
+  return { url, authToken: process.env.DATABASE_AUTH_TOKEN || process.env.TURSO_AUTH_TOKEN || undefined };
 }
 
 /** One shared connection per server instance (and across dev hot reloads). */
