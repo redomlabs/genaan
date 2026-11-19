@@ -21,4 +21,30 @@ The initial 17 gallery entries have distinct images from Unsplash, licensed unde
 - WarnrADBVDw: Federica Giusti, https://unsplash.com/photos/WarnrADBVDw (photo-1536008905557-cc918940960c)
 - BxP5Qm4byiI: Rajendra Biswal, https://unsplash.com/photos/BxP5Qm4byiI (photo-1589449104511-b2c8a9e1b7f6)
 
-The gallery is now managed through `/admin/plants`; administrator additions and replacements are stored in `genaan_plants`, not this seed list.
+These photos are now the starter images for the indoor plants and palms in `scripts/seed-data.ts`. Admins can replace any image from `/admin/catalog`.
+
+## Trees and planting bundles
+
+Starter photos for fruit trees, ornamental trees and planting bundles are also from Unsplash (Unsplash License). They illustrate each kind of tree, not exact nursery stock. Image IDs, as used in `scripts/seed-data.ts`:
+
+- Grafted mango: photo-1744565172191-7d880276a6c5
+- Baladi lemon: photo-1526438281712-35d96b8586e5
+- Navel orange: photo-1761062062542-133c221ef184
+- Mandarin: photo-1643485971934-1cbbd1907b78
+- Guava: photo-1774017543056-503e64df7576
+- Pomegranate: photo-1767895655075-32bcaa7d03ae
+- Fig: photo-1756622034653-7f08c15d6e1f
+- Olive: photo-1758818710855-b60cf3b74de6
+- Date palm: photo-1785531093420-bda3d739a932
+- Ficus nitida (hedge): photo-1642541744624-7a2a89545a32
+- Washingtonia palm: photo-1597707767025-e0e5e5dfbb97
+- Royal poinciana: photo-1540712236415-bd24103f1c51
+- Jacaranda: photo-1769721097494-dcb3b3ffcff7
+- Conocarpus (green screen): photo-1725630810343-b89b40e0079a
+- Cypress: photo-1756365951512-b15739bfbf4c
+- Bougainvillea: photo-1759013682577-530e92bf68f6
+- Home garden orchard bundle: photo-1781289056566-c4fb01d65017
+- Villa garden bundle: photo-1787505078050-c6ea63c077eb
+- Quarter-feddan citrus bundle: photo-1780287857383-9dc473fec6ec
+- Mango feddan bundle: photo-1781673232370-ece15536d3d3
+- Olive feddan bundle: photo-1762202754535-d455f57fd126

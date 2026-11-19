@@ -1,73 +1,41 @@
-import type { Metadata } from "next";
-import { Inter, Outfit, Fugaz_One } from "next/font/google";
+import type { Metadata, Viewport } from "next";
+import { Cairo, Fugaz_One, Inter } from "next/font/google";
 import "./globals.css";
-import { AuthProvider } from "./lib/auth-context";
-import { CartProvider } from "./lib/cart-context";
-import { I18nProvider } from "./lib/i18n-context";
-import LangScript from "./lib/LangScript";
+import { getLang } from "./lib/i18n-server";
+import { LangProvider } from "./components/LangProvider";
 
-const inter = Inter({
-  variable: "--font-inter",
-  subsets: ["latin"],
-  display: "swap",
-});
+const inter = Inter({ variable: "--font-inter", subsets: ["latin"], display: "swap" });
+const cairo = Cairo({ variable: "--font-cairo", subsets: ["arabic", "latin"], display: "swap" });
+const fugaz = Fugaz_One({ variable: "--font-fugaz", weight: "400", subsets: ["latin"], display: "swap" });
 
-const outfit = Outfit({
-  variable: "--font-outfit",
-  subsets: ["latin"],
-  display: "swap",
-});
+export async function generateMetadata(): Promise<Metadata> {
+  const lang = await getLang();
+  const ar = lang === "ar";
+  const title = ar ? "جنان | نباتات للأماكن وزراعة الحدائق" : "Genaan | Plants for workplaces, trees for gardens";
+  const description = ar
+    ? "باقات نباتات بسعر ثابت للشركات والعيادات والمحلات، وزراعة الحدائق والأراضي بالشجر المثمر وشجر الزينة في مصر."
+    : "Fixed-price plant bundles for offices, clinics and shops, and garden and land planting with fruit and ornamental trees in Egypt.";
+  return {
+    metadataBase: new URL(process.env.SITE_URL || "https://www.genaan.shop"),
+    title: { default: title, template: ar ? "%s | جنان" : "%s | Genaan" },
+    description,
+    openGraph: { title, description, type: "website", images: ["/assets/hero_image.png"] },
+    icons: { icon: "/favicon.ico", apple: "/assets/icon.png" },
+  };
+}
 
-const fugazOne = Fugaz_One({
-  weight: "400",
-  variable: "--font-fugaz",
-  subsets: ["latin"],
-  display: "swap",
-});
+export const viewport: Viewport = { themeColor: "#0d3a24" };
 
-export const metadata: Metadata = {
-  title: {
-    default: "Genaan | Plants for Business Spaces",
-    template: "%s | Genaan",
-  },
-  description:
-    "Plants and matching pots for businesses in Egypt. Explore packages for clinics, restaurants, hotels, supermarkets and offices, or request a custom quote.",
-  keywords: ["business plants", "indoor plants Egypt", "plant packages", "Genaan"],
-  icons: {
-    icon: "/favicon.ico",
-  },
-  openGraph: {
-    title: "Genaan | Plants for Business Spaces",
-    description: "Plant packages that bring business spaces to life.",
-    type: "website",
-  },
-};
-
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  const lang = await getLang();
   return (
     <html
-      lang="en"
-      suppressHydrationWarning
-      className={`${inter.variable} ${outfit.variable} ${fugazOne.variable} h-full antialiased`}
+      lang={lang}
+      dir={lang === "ar" ? "rtl" : "ltr"}
+      className={`${inter.variable} ${cairo.variable} ${fugaz.variable} h-full`}
     >
-      <head>
-        <link
-          rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
-          crossOrigin="anonymous"
-        />
-      </head>
-      <body className="min-h-full flex flex-col">
-        <LangScript />
-        <I18nProvider>
-          <AuthProvider>
-            <CartProvider>{children}</CartProvider>
-          </AuthProvider>
-        </I18nProvider>
+      <body className="flex min-h-full flex-col">
+        <LangProvider lang={lang}>{children}</LangProvider>
       </body>
     </html>
   );

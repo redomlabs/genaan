@@ -1,172 +1,30 @@
-"use client";
+import type { Metadata } from "next";
+import { redirect } from "next/navigation";
+import { getAdmin } from "../../lib/auth";
+import { getT } from "../../lib/i18n-server";
+import { Logo } from "../../components/Logo";
+import { LoginForm } from "../ui/LoginForm";
 
-import { useState, useEffect, Suspense } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { supabase } from "../../lib/supabase";
-import { resolveIsAdmin } from "../../lib/admin-status";
-import { useI18n } from "../../lib/i18n-context";
+export const metadata: Metadata = { title: "Admin", robots: { index: false } };
 
-function AdminLoginForm() {
-  const router = useRouter();
-  const { setLang: setGlobalLang } = useI18n();
-  const searchParams = useSearchParams();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [lang, setLang] = useState<"en" | "ar">("en");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
-
-  const isRTL = lang === "ar";
-
-  // Show error if redirected due to unauthorized access
-  useEffect(() => {
-    if (searchParams.get("error") === "unauthorized") {
-      setError(
-        isRTL
-          ? "⛔ هذا الحساب ليس له صلاحية الوصول للوحة التحكم"
-          : "⛔ This account does not have admin access",
-      );
-    }
-  }, [searchParams, isRTL]);
-
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-    setLoading(true);
-    try {
-      // Step 1: Authenticate with Supabase Auth
-      const { data, error: authError } = await supabase.auth.signInWithPassword(
-        { email, password },
-      );
-      if (authError)
-        throw new Error(
-          isRTL
-            ? "بريد إلكتروني أو كلمة مرور غير صحيحة"
-            : "Invalid email or password",
-        );
-      if (!data.session) throw new Error("No session returned");
-
-      const isAdmin = await resolveIsAdmin(data.session.user);
-
-      if (!isAdmin) {
-        await supabase.auth.signOut();
-        throw new Error(
-          isRTL
-            ? "هذا الحساب ليس له صلاحية الوصول للوحة التحكم"
-            : "This account does not have admin access",
-        );
-      }
-
-      setGlobalLang(lang);
-      router.replace("/admin");
-    } catch (err: any) {
-      setError(err.message ?? (isRTL ? "فشل تسجيل الدخول" : "Login failed"));
-    } finally {
-      setLoading(false);
-    }
-  };
-
+export default async function AdminLoginPage() {
+  if (await getAdmin()) redirect("/admin");
+  const { t } = await getT();
   return (
-    <div
-      className="min-h-screen flex items-center justify-center bg-[#0d3a24] relative overflow-hidden"
-      dir={isRTL ? "rtl" : "ltr"}
-    >
-      {/* Background blobs */}
-      <div className="absolute -top-32 -left-32 w-96 h-96 rounded-full bg-[#17583a]/40 blur-3xl pointer-events-none" />
-      <div className="absolute -bottom-32 -right-32 w-96 h-96 rounded-full bg-[#2d7a55]/30 blur-3xl pointer-events-none" />
-
-      <div className="relative w-full max-w-sm mx-4">
-        {/* Card */}
-        <div className="bg-white rounded-3xl shadow-2xl p-8">
-          {/* Logo */}
-          <div className="text-center mb-8">
-            <img
-              src="/favicon.ico"
-              alt="Genaan"
-              className="w-14 h-14 rounded-2xl mx-auto mb-3"
-            />
-            <h1 className="text-2xl font-black text-[#0d3a24]">Genaan Admin</h1>
-            <p className="text-sm text-[#5f786c] mt-1">
-              {isRTL
-                ? "لوحة تحكم المتجر — للمدراء فقط"
-                : "Store Control Panel — Admins Only"}
-            </p>
-          </div>
-
-          {/* Error */}
-          {error && (
-            <div className="mb-5 px-4 py-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-600 text-center font-medium">
-              {error}
-            </div>
-          )}
-
-          <form onSubmit={handleLogin} className="space-y-4">
-            <div>
-              <label className="block text-xs font-semibold text-[#0d3a24] mb-1.5">
-                {isRTL ? "البريد الإلكتروني" : "Email address"}
-              </label>
-              <input
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="admin@genaan.com"
-                className="w-full px-4 py-3 rounded-xl border border-[#d4ded7] bg-[#f4f5f1] text-sm text-[#0d3a24] placeholder-[#8aab99] focus:outline-none focus:ring-2 focus:ring-[#17583a] focus:border-transparent transition-all"
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-semibold text-[#0d3a24] mb-1.5">
-                {isRTL ? "كلمة المرور" : "Password"}
-              </label>
-              <input
-                type="password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-                className="w-full px-4 py-3 rounded-xl border border-[#d4ded7] bg-[#f4f5f1] text-sm text-[#0d3a24] placeholder-[#8aab99] focus:outline-none focus:ring-2 focus:ring-[#17583a] focus:border-transparent transition-all"
-              />
-            </div>
-
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full py-3.5 rounded-xl bg-[#0d3a24] text-white font-bold text-sm hover:bg-[#17583a] transition-colors disabled:opacity-50 disabled:cursor-not-allowed mt-2"
-            >
-              {loading
-                ? isRTL
-                  ? "جارٍ التحقق..."
-                  : "Verifying…"
-                : isRTL
-                  ? "دخول"
-                  : "Sign in"}
-            </button>
-          </form>
-
-          {/* Lang toggle */}
-          <div className="mt-6 text-center">
-            <button
-              onClick={() => setLang((l) => (l === "en" ? "ar" : "en"))}
-              className="text-xs text-[#8aab99] hover:text-[#17583a] transition-colors font-medium"
-            >
-              🌐 {isRTL ? "Switch to English" : "التبديل إلى العربية"}
-            </button>
-          </div>
+    <main className="grid min-h-svh lg:grid-cols-2">
+      <div
+        className="hidden bg-cover bg-center lg:block"
+        style={{ backgroundImage: "linear-gradient(rgb(10 37 24 / .35), rgb(10 37 24 / .65)), url('/assets/hero_image.png')" }}
+        aria-hidden="true"
+      />
+      <div className="flex items-center justify-center p-6">
+        <div className="w-full max-w-sm">
+          <Logo size="lg" />
+          <h1 className="mt-8 text-2xl font-bold">{t("دخول لوحة التحكم", "Sign in to the dashboard")}</h1>
+          <p className="mt-2 text-sm text-moss">{t("للإدارة بس.", "For store staff only.")}</p>
+          <LoginForm />
         </div>
-
-        <p className="text-center text-white/30 text-xs mt-5">
-          🔐 {isRTL ? "للوصول المصرح به فقط" : "Authorized access only"}
-        </p>
       </div>
-    </div>
-  );
-}
-
-// Wrap with Suspense because useSearchParams needs it
-export default function AdminLoginPage() {
-  return (
-    <Suspense>
-      <AdminLoginForm />
-    </Suspense>
+    </main>
   );
 }

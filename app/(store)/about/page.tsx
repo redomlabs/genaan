@@ -1,47 +1,53 @@
-"use client";
+import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
-import { useI18n } from "../../lib/i18n-context";
-export default function AboutPage() {
-  const { isRTL } = useI18n();
-  const c = (ar: string, en: string) => (isRTL ? ar : en);
+import { getLang, getT } from "../../lib/i18n-server";
+import { pick } from "../../lib/format";
+
+export async function generateMetadata(): Promise<Metadata> {
+  return { title: pick(await getLang(), "عن جنان", "About Genaan") };
+}
+
+export default async function AboutPage() {
+  const { t } = await getT();
   return (
-    <section
-      dir={isRTL ? "rtl" : "ltr"}
-      className="mx-auto max-w-[1100px] px-5 py-16"
-    >
-      <p className="text-xs tracking-widest text-[#5f786c]">
-        {c("عن جنان", "ABOUT GENAAN")}
-      </p>
-      <h1 className="mt-4 max-w-3xl text-4xl font-bold leading-tight md:text-6xl">
-        {c("نباتات تضيف ترحيب وجمال لمكانك.", "Plants that make your space more welcoming.")}
+    <div className="container-page py-12 md:py-16">
+      <h1 className="font-display max-w-3xl text-4xl leading-tight md:text-6xl">
+        {t("جنان يعني جناين. وده اللي بنعمله.", "Genaan means gardens. That's what we make.")}
       </h1>
-      <div className="mt-10 grid items-center gap-10 md:grid-cols-2">
-        <img
-          className="h-96 w-full rounded-3xl object-cover"
+      <div className="mt-10 grid items-start gap-10 md:grid-cols-2">
+        <Image
           src="/assets/hero_image.png"
-          alt={c("مساحة نباتية من جنان", "Plants arranged in an interior")}
+          alt={t("نباتات ونخيل داخلي في مساحة عمل", "Indoor plants and palms in a workspace")}
+          width={1425}
+          height={690}
+          className="h-80 w-full rounded-[var(--radius-panel)] object-cover md:h-[28rem]"
         />
-        <div className="space-y-5 text-base leading-8 text-[#5f786c]">
+        <div className="space-y-5 text-base leading-8 text-moss">
           <p>
-            {c(
-              "جنان تساعد الأنشطة التجارية على إضافة نباتات وأصص متناسقة للمكان. هدفنا إن كل ركن يخدم تجربة الناس: استقبال مريح في عيادة، لمسة ترحيب في مطعم، أو انطباع مميز في فندق ومحل تجاري.",
-              "Genaan brings plants and matching pots to business spaces in Egypt. From clinic receptions to restaurants, hotels and shops, we help you create a place where people feel welcome.",
+            {t(
+              "بنشتغل في اتجاهين: نجهز أماكن الشغل بنباتات ونخيل داخلي بتعيش في التكييف والإضاءة الضعيفة، ونزرع الحدائق والأراضي بشجر مثمر وشجر زينة مناسب للمناخ المصري.",
+              "We work in two directions: furnishing workplaces with indoor plants and palms that cope with air-conditioning and low light, and planting gardens and land with fruit and ornamental trees suited to Egypt's climate.",
             )}
           </p>
           <p>
-            {c(
-              "ابدأ بباقة من باقاتنا أو احكي لنا عن مشروع مخصص. نختار النباتات ونرتبها حسب الإضاءة والأثاث واستخدام المكان. ويمكنك إضافة عناية سنوية لمتابعة النباتات مع الوقت.",
-              "Start with one of our packages or tell us about a custom project. We choose the plants and plan their placement around your lighting, furniture and daily use. Optional annual care helps you look after them over time.",
+            {t(
+              "علشان الطلب يبقى سهل، كل حاجة عندنا بسعر واضح: الباقة بسعر ثابت، الشجرة بسعرها، والتوصيل والزراعة بيتحسبوا قدامك قبل ما تأكد.",
+              "To keep ordering simple, everything has a clear price: bundles cost a fixed amount, each tree has its own price, and delivery and planting are worked out in front of you before you confirm.",
             )}
           </p>
-          <Link
-            href="/packages"
-            className="inline-block rounded-xl bg-[#17583a] px-6 py-3 text-sm font-semibold text-white"
-          >
-            {c("اكتشف الباقات", "Discover packages")}
-          </Link>
+          <p>
+            {t(
+              "قبل التنفيذ بنكلمك نراجع المكان أو الأرض، ولو صنف مش متاح بنقترح بديل بنفس الحجم والسعر.",
+              "Before we deliver we call to check the space or land, and if a variety is out of stock we suggest an equivalent of the same size and price.",
+            )}
+          </p>
+          <div className="flex flex-wrap gap-3 pt-2">
+            <Link href="/business" className="btn btn-primary">{t("باقات الأماكن", "Workplace bundles")}</Link>
+            <Link href="/planting" className="btn btn-harvest">{t("الشجر والزراعة", "Trees and planting")}</Link>
+          </div>
         </div>
       </div>
-    </section>
+    </div>
   );
 }

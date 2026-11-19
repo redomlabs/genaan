@@ -1,35 +1,69 @@
-"use client";
-import { useEffect, useState } from "react";
-import Link from "next/link";
-import { useI18n } from "../../lib/i18n-context";
-import { normalizeWhatsApp, type PlantPackage, type BusinessSettings } from "../../lib/commercial";
-import { QuoteRequestForm } from "../../components/commercial/QuoteRequestForm";
-export default function ContactPage() {
-  const { isRTL } = useI18n();
-  const c = (ar: string, en: string) => isRTL ? ar : en;
-  const [data, setData] = useState<{ settings: BusinessSettings; packages: PlantPackage[]; available: boolean } | null>(null);
-  const [loaded, setLoaded] = useState(false);
-  useEffect(() => { fetch("/api/business").then(r => r.json()).then(setData).catch(() => {}).finally(() => setLoaded(true)); }, []);
-  const phone = normalizeWhatsApp(data?.settings.whatsapp || "");
-  const custom = data?.packages.find(p => p.is_custom);
-  return <section dir={isRTL ? "rtl" : "ltr"} className="mx-auto max-w-[1100px] px-5 py-16">
-    <p className="text-xs tracking-widest text-[#5f786c]">{c("تواصل معنا", "CONTACT US")}</p>
-    <h1 className="mt-4 text-4xl font-bold md:text-6xl">{c("احكي لنا عن مكانك.", "Tell us about your space.")}</h1>
-    <p className="mt-5 max-w-2xl text-base leading-8 text-[#5f786c]">{c("احكي لنا عن مدينتك ونشاطك. المساحة اختيارية، وممكن تكتفي بعدد الغرف. املأ الفورم وفريق جنان هيتواصل معاك لمناقشة النباتات والنخيل وتوزيعها وخطة العناية السنوية.", "Share a few details about your business and what you have in mind. We will call you to discuss the right plants, layout and care for your space. You can leave the area blank if you are unsure.")}</p>
-    <div className="mt-10 grid items-start gap-8 md:grid-cols-2">
-      <div className="space-y-5 rounded-3xl bg-[#0d3a24] p-8 text-white">
-        <h2 className="text-2xl font-bold">{c("تواصل مع جنان", "Contact Genaan")}</h2>
-        {!loaded && <p>{c("جارٍ تحميل بيانات التواصل…", "Loading contact details…")}</p>}
-        {phone && <a className="block rounded-xl bg-white/10 p-4" href={`https://wa.me/${phone}`} target="_blank" rel="noopener noreferrer">WhatsApp <span className="ms-2" dir="ltr">+{phone}</span> ↗</a>}
-        {data?.settings.email && <a className="block break-all rounded-xl bg-white/10 p-4" href={`mailto:${data.settings.email}`}>{data.settings.email}</a>}
-        {data?.settings.phone && <a className="block rounded-xl bg-white/10 p-4" dir="ltr" href={`tel:${data.settings.phone}`}>{data.settings.phone}</a>}
-        <p className="text-sm leading-7 text-white/75">{c("الباقة المخصصة بدون سعر ثابت. نتفق على العدد والخامات والتوصيل والعناية قبل أي تنفيذ. لا يتم الدفع من الموقع.", "We will prepare a quote based on your plants, pots and layout. Delivery and optional care are priced separately. There is no payment at this stage.")}</p>
-        <Link className="inline-block underline" href="/packages">{c("استعرض الباقات الجاهزة", "Explore our packages")}</Link>
-      </div>
-      <div className="rounded-3xl border border-[#d4ded7] bg-white p-8">
-        <h2 className="mb-5 text-2xl font-bold">{c("باقة على مقاسك", "Request a custom package")}</h2>
-        {custom && data ? <QuoteRequestForm selected={custom} settings={data.settings} available={data.available}/> : <p className="text-sm">{loaded ? c("استخدم بيانات التواصل لمناقشة احتياجك.", "Use the contact details to discuss your needs.") : c("جارٍ التحميل…", "Loading…")}</p>}
+import type { Metadata } from "next";
+import { getSettings } from "../../lib/data";
+import { getLang, getT } from "../../lib/i18n-server";
+import { normalizePhone, pick, whatsappLink } from "../../lib/format";
+import { EnquiryForm } from "../../components/store/Forms";
+import { MailIcon, PhoneIcon, PinIcon, WhatsAppIcon } from "../../components/icons";
+
+export async function generateMetadata(): Promise<Metadata> {
+  return { title: pick(await getLang(), "تواصل معنا", "Contact us") };
+}
+
+export default async function ContactPage({ searchParams }: { searchParams: Promise<{ topic?: string; area?: string }> }) {
+  const [{ t, lang }, settings, params] = await Promise.all([getT(), getSettings(), searchParams]);
+  const topic = params.topic === "business" || params.topic === "planting" ? params.topic : "other";
+  const area = Number(params.area) > 0 ? Math.round(Number(params.area)) : undefined;
+  const wa = whatsappLink(settings.whatsapp);
+  const phone = normalizePhone(settings.phone);
+  const address = lang === "ar" ? settings.addressAr : settings.addressEn;
+  const channels = [
+    phone && { href: `tel:+${phone}`, Icon: PhoneIcon, label: t("اتصل بينا", "Call us"), value: `+${phone}`, ltr: true },
+    wa && { href: wa, Icon: WhatsAppIcon, label: t("واتساب", "WhatsApp"), value: t("ابعت رسالة", "Send a message"), ltr: false },
+    settings.email && { href: `mailto:${settings.email}`, Icon: MailIcon, label: t("الإيميل", "Email"), value: settings.email, ltr: true },
+  ].filter(Boolean) as { href: string; Icon: typeof PhoneIcon; label: string; value: string; ltr: boolean }[];
+
+  return (
+    <div className="container-page py-12 md:py-16">
+      <h1 className="font-display max-w-3xl text-4xl leading-tight md:text-6xl">{t("احكي لنا عن مكانك أو أرضك.", "Tell us about your space or land.")}</h1>
+      <p className="mt-5 max-w-2xl text-base leading-8 text-moss">
+        {t(
+          "لو الباقات الجاهزة مش مناسبة، أو عندك مشروع كبير، ابعت التفاصيل وهنكلمك نتفق على المعاينة وعرض السعر.",
+          "If the ready bundles don't fit, or you have a large project, send us the details and we'll call to arrange a visit and a quote.",
+        )}
+      </p>
+      <div className="mt-10 grid items-start gap-8 lg:grid-cols-[1.5fr_1fr]">
+        <div className="rounded-[var(--radius-panel)] bg-white p-6 md:p-8">
+          <EnquiryForm topic={topic} area={area} />
+        </div>
+        <div className="space-y-3">
+          {channels.map(({ href, Icon, label, value, ltr }) => (
+            <a
+              key={label}
+              href={href}
+              target={href.startsWith("http") ? "_blank" : undefined}
+              rel={href.startsWith("http") ? "noopener noreferrer" : undefined}
+              className="flex items-center gap-4 rounded-[var(--radius-card)] bg-forest p-5 text-white hover:bg-canopy"
+            >
+              <Icon size={24} className="shrink-0 text-mint" />
+              <span>
+                <span className="block text-sm text-mint">{label}</span>
+                <span className="num block break-all font-semibold" dir={ltr ? "ltr" : undefined}>{value}</span>
+              </span>
+            </a>
+          ))}
+          {address && (
+            <p className="flex items-start gap-4 rounded-[var(--radius-card)] border border-line-soft bg-white p-5">
+              <PinIcon size={24} className="shrink-0 text-canopy" />
+              {address}
+            </p>
+          )}
+          {channels.length === 0 && !address && (
+            <p className="rounded-[var(--radius-card)] border border-dashed border-line p-5 text-sm text-moss">
+              {t("ابعت الفورم وهنرد عليك على الموبايل.", "Send the form and we'll get back to you by phone.")}
+            </p>
+          )}
+        </div>
       </div>
     </div>
-  </section>;
+  );
 }
