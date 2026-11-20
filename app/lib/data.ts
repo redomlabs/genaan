@@ -137,3 +137,17 @@ export const getOrderByToken = cache(async (token: string) => {
 });
 
 export type OrderWithLines = NonNullable<Awaited<ReturnType<typeof getOrderByToken>>>;
+
+export type Project = typeof schema.projects.$inferSelect;
+
+/** Portfolio projects; the landing section is shown only when the admin turns it on. */
+export const getPortfolio = cache(async (includeInactive = false): Promise<{ enabled: boolean; projects: Project[] }> => {
+  const db = getDb();
+  const [setting] = await db.select().from(schema.settings).where(eq(schema.settings.key, "show_portfolio"));
+  const projects = await db
+    .select()
+    .from(schema.projects)
+    .where(includeInactive ? undefined : eq(schema.projects.isActive, true))
+    .orderBy(asc(schema.projects.sortOrder), desc(schema.projects.createdAt));
+  return { enabled: setting?.value === "1", projects };
+});

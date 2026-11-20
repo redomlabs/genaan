@@ -185,3 +185,19 @@ export const media = sqliteTable("media", {
   data: blob("data", { mode: "buffer" }).notNull(),
   createdAt: createdAt(),
 });
+
+/** Past work shown on the landing page when the admin turns the section on. */
+export const projects = sqliteTable("projects", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  service: text("service", { enum: ["business", "planting"] }).notNull(),
+  titleAr: text("title_ar").notNull(),
+  titleEn: text("title_en").notNull(),
+  clientAr: text("client_ar").notNull().default(""),
+  clientEn: text("client_en").notNull().default(""),
+  descriptionAr: text("description_ar").notNull().default(""),
+  descriptionEn: text("description_en").notNull().default(""),
+  images: text("images", { mode: "json" }).$type<string[]>().notNull().default(sql`'[]'`),
+  isActive: integer("is_active", { mode: "boolean" }).notNull().default(true),
+  sortOrder: integer("sort_order").notNull().default(0),
+  createdAt: createdAt(),
+});

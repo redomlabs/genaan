@@ -373,3 +373,64 @@ export async function setEnquiryStatus(id: number, status: "new" | "handled"): P
   return { ok: true };
 }
 
+
+// ─── Portfolio ──────────────────────────────────────────────────────────────
+
+export type ProjectInput = {
+  id?: number;
+  service: Service;
+  titleAr: string;
+  titleEn: string;
+  clientAr: string;
+  clientEn: string;
+  descriptionAr: string;
+  descriptionEn: string;
+  images: string[];
+  isActive: boolean;
+  sortOrder: string;
+};
+
+export async function saveProject(input: ProjectInput): Promise<ActionResult> {
+  await requireAdmin();
+  const titleAr = str(input.titleAr, 100);
+  const titleEn = str(input.titleEn, 100);
+  if (!titleAr || !titleEn) return { error: await msg("اكتب عنوان الشغل بالعربي والإنجليزي.", "Enter the project title in Arabic and English.") };
+  const images = (Array.isArray(input.images) ? input.images : []).map((u) => safeImageUrl(String(u))).filter(Boolean).slice(0, 12);
+  if (images.length === 0) return { error: await msg("ضيف صورة واحدة على الأقل.", "Add at least one photo.") };
+  const values = {
+    service: (input.service === "planting" ? "planting" : "business") as Service,
+    titleAr,
+    titleEn,
+    clientAr: str(input.clientAr, 100),
+    clientEn: str(input.clientEn, 100),
+    descriptionAr: str(input.descriptionAr, 500),
+    descriptionEn: str(input.descriptionEn, 500),
+    images,
+    isActive: Boolean(input.isActive),
+    sortOrder: int(input.sortOrder) ?? 0,
+  };
+  const db = getDb();
+  let id = input.id;
+  if (id) await db.update(schema.projects).set(values).where(eq(schema.projects.id, id));
+  else [{ id }] = await db.insert(schema.projects).values(values).returning({ id: schema.projects.id });
+  refreshStore();
+  return { ok: true, id };
+}
+
+export async function deleteProject(id: number): Promise<ActionResult> {
+  await requireAdmin();
+  await getDb().delete(schema.projects).where(eq(schema.projects.id, id));
+  refreshStore();
+  return { ok: true };
+}
+
+export async function setPortfolioVisible(visible: boolean): Promise<ActionResult> {
+  await requireAdmin();
+  const value = visible ? "1" : "0";
+  await getDb()
+    .insert(schema.settings)
+    .values({ key: "show_portfolio", value })
+    .onConflictDoUpdate({ target: schema.settings.key, set: { value } });
+  refreshStore();
+  return { ok: true };
+}

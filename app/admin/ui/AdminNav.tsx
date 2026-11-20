@@ -18,6 +18,7 @@ import {
   SproutIcon,
   TruckIcon,
   BagIcon,
+  ImageIcon,
 } from "../../components/icons";
 
 export function AdminNav({ name, badges }: { name: string; badges: { orders: number; enquiries: number } }) {
@@ -32,6 +33,7 @@ export function AdminNav({ name, badges }: { name: string; badges: { orders: num
     { href: "/admin/orders", label: t("الطلبات", "Orders"), Icon: BagIcon, badge: badges.orders },
     { href: "/admin/bundles", label: t("الباقات", "Bundles"), Icon: BoxIcon },
     { href: "/admin/catalog", label: t("النباتات والشجر", "Plants and trees"), Icon: SproutIcon },
+    { href: "/admin/portfolio", label: t("أعمالنا السابقة", "Our work"), Icon: ImageIcon },
     { href: "/admin/fees", label: t("التوصيل والزراعة", "Delivery and planting"), Icon: TruckIcon },
     { href: "/admin/enquiries", label: t("طلبات العروض", "Quote requests"), Icon: InboxIcon, badge: badges.enquiries },
     { href: "/admin/settings", label: t("الإعدادات", "Settings"), Icon: SettingsIcon },

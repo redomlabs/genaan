@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { getBundles, getCatalog, getSettings, getZones } from "../lib/data";
+import { getBundles, getCatalog, getPortfolio, getSettings, getZones } from "../lib/data";
+import { OurWork } from "../components/store/OurWork";
 import { getT } from "../lib/i18n-server";
 import { formatMoney, formatNumber, pick } from "../lib/format";
 import { PLANTING_KINDS } from "../lib/types";
@@ -11,13 +12,15 @@ import { ShovelIcon, TruckIcon } from "../components/icons";
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
-  const [{ t, lang }, bundles, catalog, settings, zones] = await Promise.all([
+  const [{ t, lang }, bundles, catalog, settings, zones, portfolio] = await Promise.all([
     getT(),
     getBundles(),
     getCatalog(),
     getSettings(),
     getZones(),
+    getPortfolio(),
   ]);
+  const work = portfolio.enabled ? portfolio.projects.filter((p) => p.images.length > 0) : [];
   const business = bundles.filter((b) => b.service === "business");
   const trees = catalog.filter((c) => PLANTING_KINDS.includes(c.kind) && c.price !== null);
   const showcase = [...business].sort((a, b) => Number(b.isFeatured) - Number(a.isFeatured) || a.sortOrder - b.sortOrder).slice(0, 3);
@@ -145,6 +148,19 @@ export default async function HomePage() {
               )}
             </div>
           </div>
+        </section>
+      )}
+
+      {/* Past work, shown only when the admin turns it on */}
+      {work.length > 0 && (
+        <section className="container-page pb-16 md:pb-24" aria-labelledby="our-work">
+          <h2 id="our-work" className="font-display text-2xl md:text-4xl">{t("من شغلنا", "Our work")}</h2>
+          <p className="mt-3 mb-8 max-w-2xl text-base leading-7 text-moss">
+            {t("أماكن جهزناها وأراضي زرعناها لعملائنا.", "Spaces we've furnished and land we've planted for our clients.")}
+          </p>
+          <OurWork
+            projects={work.map(({ id, service, titleAr, titleEn, clientAr, clientEn, descriptionAr, descriptionEn, images }) => ({ id, service, titleAr, titleEn, clientAr, clientEn, descriptionAr, descriptionEn, images }))}
+          />
         </section>
       )}
 
