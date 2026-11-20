@@ -57,7 +57,7 @@ export async function Footer() {
         <nav aria-label={t("المساعدة", "Help")}>
           <h2 className="mb-4 text-sm font-bold text-white">{t("المساعدة", "Help")}</h2>
           <ul className="space-y-2.5 text-sm">
-            <li><Link href="/track" className="hover:text-white">{t("تتبع طلبك", "Track an order")}</Link></li>
+            <li><Link href="/orders" className="hover:text-white">{t("طلباتي", "My orders")}</Link></li>
             <li><Link href="/faq" className="hover:text-white">{t("أسئلة متكررة", "Questions")}</Link></li>
             <li><Link href="/about" className="hover:text-white">{t("عن جنان", "About Genaan")}</Link></li>
             <li><Link href="/privacy-policy" className="hover:text-white">{t("الخصوصية", "Privacy")}</Link></li>

@@ -18,7 +18,8 @@ const nextConfig: NextConfig = {
       { source: "/shop/:path*", destination: "/planting", permanent: true },
       { source: "/journal/:path*", destination: "/", permanent: true },
       { source: "/cart", destination: "/checkout", permanent: false },
-      { source: "/(login|register|account|forgot-password|reset-password|verify-otp)", destination: "/track", permanent: false },
+      { source: "/track", destination: "/orders", permanent: true },
+      { source: "/(login|register|account|forgot-password|reset-password|verify-otp)", destination: "/orders", permanent: false },
     ];
   },
 };

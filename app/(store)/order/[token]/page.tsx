@@ -5,6 +5,7 @@ import { getOrderByToken, getSettings } from "../../../lib/data";
 import { getLang, getT } from "../../../lib/i18n-server";
 import { formatDate, formatMoney, formatNumber, pick, whatsappLink } from "../../../lib/format";
 import { ORDER_STATUS_LABELS, type OrderStatus } from "../../../lib/types";
+import { RememberOrder } from "../../../components/store/MyOrders";
 import { CheckIcon, WhatsAppIcon } from "../../../components/icons";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -27,6 +28,7 @@ export default async function OrderPage({ params }: { params: Promise<{ token: s
 
   return (
     <div className="container-page max-w-4xl py-10 md:py-14">
+      <RememberOrder token={order.token} />
       <div className="rounded-[var(--radius-panel)] bg-forest p-6 text-white md:p-10">
         <p className="text-sm text-mint">{t("رقم الطلب", "Order number")}</p>
         <p className="num mt-1 text-4xl font-bold tracking-wide md:text-5xl" dir="ltr">
@@ -124,7 +126,7 @@ export default async function OrderPage({ params }: { params: Promise<{ token: s
       </div>
 
       <p className="mt-8 text-center text-sm text-moss">
-        <Link href="/" className="font-semibold text-canopy hover:underline">{t("رجوع للرئيسية", "Back to home")}</Link>
+        <Link href="/orders" className="font-semibold text-canopy hover:underline">{t("كل طلباتي", "All my orders")}</Link>
       </p>
     </div>
   );

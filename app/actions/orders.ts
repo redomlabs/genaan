@@ -1,7 +1,7 @@
 "use server";
 
 import { randomBytes, randomInt } from "node:crypto";
-import { and, count, eq, gte } from "drizzle-orm";
+import { and, count, desc, eq, gte, inArray } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import { getDb, schema } from "../lib/db";
 import { getBundles, getCatalog, getSettings, getZones } from "../lib/data";
@@ -184,4 +184,38 @@ export async function createEnquiry(_prev: EnquiryState, formData: FormData): Pr
 
   await db.insert(schema.enquiries).values({ topic, name, phone, city, area, message });
   return { ok: true };
+}
+
+export type OrderSummary = {
+  token: string;
+  code: string;
+  status: "new" | "confirmed" | "scheduled" | "completed" | "cancelled";
+  total: number;
+  createdAt: number;
+  items: { nameAr: string; nameEn: string; quantity: number }[];
+};
+
+/** Summaries for the orders this device has placed or looked up. Tokens are unguessable, so they act as the key. */
+export async function getMyOrders(tokens: string[]): Promise<OrderSummary[]> {
+  const valid = (Array.isArray(tokens) ? tokens : []).filter((t) => typeof t === "string" && /^[A-Za-z0-9_-]{20,40}$/.test(t)).slice(0, 30);
+  if (valid.length === 0) return [];
+  const db = getDb();
+  const orders = await db
+    .select({ id: schema.orders.id, token: schema.orders.token, code: schema.orders.code, status: schema.orders.status, total: schema.orders.total, createdAt: schema.orders.createdAt })
+    .from(schema.orders)
+    .where(inArray(schema.orders.token, valid))
+    .orderBy(desc(schema.orders.createdAt));
+  if (orders.length === 0) return [];
+  const lines = await db
+    .select({ orderId: schema.orderLines.orderId, nameAr: schema.orderLines.nameAr, nameEn: schema.orderLines.nameEn, quantity: schema.orderLines.quantity })
+    .from(schema.orderLines)
+    .where(inArray(schema.orderLines.orderId, orders.map((o) => o.id)));
+  return orders.map((o) => ({
+    token: o.token,
+    code: o.code,
+    status: o.status,
+    total: o.total,
+    createdAt: o.createdAt.getTime(),
+    items: lines.filter((l) => l.orderId === o.id).map(({ nameAr, nameEn, quantity }) => ({ nameAr, nameEn, quantity })),
+  }));
 }

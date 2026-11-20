@@ -5,7 +5,7 @@ export const dynamic = "force-dynamic";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = process.env.SITE_URL || "https://www.genaan.shop";
-  const pages = ["", "/business", "/planting", "/seeds", "/contact", "/about", "/faq", "/track"].map((p) => ({
+  const pages = ["", "/business", "/planting", "/seeds", "/contact", "/about", "/faq", "/orders"].map((p) => ({
     url: `${base}${p}`,
     changeFrequency: "weekly" as const,
   }));

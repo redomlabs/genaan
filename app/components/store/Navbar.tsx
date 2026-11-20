@@ -33,7 +33,7 @@ export function Navbar() {
     { href: "/planting", label: t("زراعة الحدائق والأراضي", "Garden & land planting") },
     { href: "/planting#trees", label: t("أسعار الشجر", "Tree prices") },
     { href: "/seeds", label: t("البذور", "Seeds") },
-    { href: "/track", label: t("تتبع طلبك", "Track an order") },
+    { href: "/orders", label: t("طلباتي", "My orders") },
     { href: "/contact", label: t("تواصل معنا", "Contact") },
   ];
   const isActive = (href: string) => !href.includes("#") && pathname.startsWith(href);
