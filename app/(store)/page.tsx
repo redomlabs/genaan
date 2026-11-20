@@ -6,7 +6,7 @@ import { PLANTING_KINDS } from "../lib/types";
 import { toFinderBundles } from "../lib/finder";
 import { AreaFinder } from "../components/store/AreaFinder";
 import { BundleCard } from "../components/store/BundleCard";
-import { BuildingIcon, ChevronIcon, ShovelIcon, TreeIcon, TruckIcon } from "../components/icons";
+import { ShovelIcon, TruckIcon } from "../components/icons";
 
 export const dynamic = "force-dynamic";
 
@@ -20,8 +20,6 @@ export default async function HomePage() {
   ]);
   const business = bundles.filter((b) => b.service === "business");
   const trees = catalog.filter((c) => PLANTING_KINDS.includes(c.kind) && c.price !== null);
-  const minBusiness = business.length ? Math.min(...business.map((b) => b.price)) : null;
-  const minTree = trees.length ? Math.min(...trees.map((x) => x.price ?? 0)) : null;
   const showcase = [...business].sort((a, b) => Number(b.isFeatured) - Number(a.isFeatured) || a.sortOrder - b.sortOrder).slice(0, 3);
   const minZone = zones.length ? Math.min(...zones.map((z) => z.fee)) : null;
 
@@ -30,7 +28,7 @@ export default async function HomePage() {
       {/* Hero: the two services are the two doors into the store. */}
       <section className="relative isolate overflow-hidden bg-forest-deep text-white">
         <div
-          className="absolute inset-0 -z-10 bg-cover bg-center"
+          className="absolute inset-0 -z-10 bg-cover bg-center rtl:-scale-x-100"
           style={{ backgroundImage: "url('/assets/hero_image.png')" }}
           aria-hidden="true"
         />
@@ -48,34 +46,6 @@ export default async function HomePage() {
             </p>
           </div>
 
-          <div className="mt-8 grid max-w-xl gap-2.5 sm:grid-cols-2">
-            <Link
-              href="/business"
-              className="group flex items-center gap-3 rounded-2xl bg-white/95 hover:bg-white py-2.5 ps-2.5 pe-4 text-forest transition-colors"
-            >
-              <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-mist text-canopy">
-                <BuildingIcon size={19} />
-              </span>
-              <span className="min-w-0">
-                <span className="block text-sm font-bold">{t("لمكان شغلك", "For your workplace")}</span>
-                <span className="num block text-xs text-moss">{minBusiness !== null ? t(`باقات من ${formatMoney(minBusiness, lang)}`, `Bundles from ${formatMoney(minBusiness, lang)}`) : t("باقات نباتات", "Plant bundles")}</span>
-              </span>
-              <ChevronIcon size={16} className="ms-auto shrink-0 text-moss" />
-            </Link>
-            <Link
-              href="/planting"
-              className="group flex items-center gap-3 rounded-2xl bg-harvest-soft hover:bg-[#fbf3e3] py-2.5 ps-2.5 pe-4 text-forest transition-colors"
-            >
-              <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-white text-harvest-deep">
-                <TreeIcon size={19} />
-              </span>
-              <span className="min-w-0">
-                <span className="block text-sm font-bold">{t("لحديقتك أو أرضك", "For your garden or land")}</span>
-                <span className="num block text-xs text-moss">{minTree !== null ? t(`الشجرة من ${formatMoney(minTree, lang)}`, `Trees from ${formatMoney(minTree, lang)}`) : t("شجر وزراعة", "Trees and planting")}</span>
-              </span>
-              <ChevronIcon size={16} className="ms-auto shrink-0 text-moss" />
-            </Link>
-          </div>
         </div>
       </section>
 
