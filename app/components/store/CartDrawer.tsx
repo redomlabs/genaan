@@ -6,12 +6,13 @@ import { formatMoney } from "../../lib/format";
 import { useLang } from "../LangProvider";
 import { useCart } from "./CartProvider";
 import { QuantityStepper } from "./QuantityStepper";
-import { BagIcon, CloseIcon, ShovelIcon, TrashIcon } from "../icons";
+import { BagIcon, CloseIcon, TrashIcon } from "../icons";
+import { PlantingSwitch } from "./PlantingSwitch";
 import { Thumb } from "./Thumb";
 
 export function CartDrawer() {
   const { t, lang } = useLang();
-  const { entries, isOpen, close, setQuantity, setPlanting, remove } = useCart();
+  const { entries, isOpen, close, setQuantity, remove } = useCart();
 
   useEffect(() => {
     if (!isOpen) return;
@@ -76,27 +77,16 @@ export function CartDrawer() {
                         </button>
                       </div>
                       <p className="num text-sm text-moss">{formatMoney(e.unitPrice, lang)}</p>
-                      <div className="mt-2 flex flex-wrap items-center gap-3">
+                      <div className="mt-2">
                         <QuantityStepper size="sm" value={e.quantity} onChange={(q) => setQuantity(e.type, e.id, q)} label={name} />
-                        {e.plantable && (
-                          <label className="inline-flex items-center gap-2 text-sm">
-                            <input
-                              type="checkbox"
-                              checked={e.planting}
-                              onChange={(ev) => setPlanting(e.type, e.id, ev.target.checked)}
-                              className="h-4 w-4 accent-[var(--color-canopy)]"
-                            />
-                            <ShovelIcon size={16} className="text-harvest" />
-                            {t("مع الزراعة", "Plant it for me")}
-                          </label>
-                        )}
                       </div>
                     </div>
                   </li>
                 );
               })}
             </ul>
-            <div className="border-t border-line-soft bg-white px-5 py-4">
+            <div className="space-y-3 border-t border-line-soft bg-white px-5 py-4">
+              <PlantingSwitch />
               <div className="flex items-baseline justify-between">
                 <span className="text-sm text-moss">{t("إجمالي المنتجات", "Products")}</span>
                 <span className="num text-lg font-bold">{formatMoney(subtotal, lang)}</span>

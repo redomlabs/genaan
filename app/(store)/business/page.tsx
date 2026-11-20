@@ -36,7 +36,7 @@ export default async function BusinessPage({ searchParams }: { searchParams: Pro
   return (
     <>
       <header className="container-page pb-10 pt-12 md:pt-16">
-        <h1 className="font-display max-w-3xl text-4xl leading-tight md:text-6xl">
+        <h1 className="font-display max-w-3xl text-3xl leading-tight md:text-5xl">
           {t("نباتات لمكان شغلك، بسعر ثابت.", "Plants for your workplace, at a fixed price.")}
         </h1>
         <p className="mt-5 max-w-2xl text-base leading-8 text-moss md:text-lg">

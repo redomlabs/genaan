@@ -37,7 +37,7 @@ export default async function PrivacyPage() {
   ];
   return (
     <div className="container-page max-w-3xl py-12 md:py-16">
-      <h1 className="font-display text-4xl md:text-5xl">{t("سياسة الخصوصية", "Privacy policy")}</h1>
+      <h1 className="font-display text-3xl md:text-4xl">{t("سياسة الخصوصية", "Privacy policy")}</h1>
       <div className="mt-8 space-y-8">
         {sections.map(([h, p]) => (
           <section key={h}>

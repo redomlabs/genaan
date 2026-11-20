@@ -1,9 +1,12 @@
 export type Lang = "ar" | "en";
 
-export type ItemKind = "indoor" | "palm" | "fruit" | "ornamental";
+export type ItemKind = "indoor" | "palm" | "fruit" | "ornamental" | "seed";
 export type Service = "business" | "planting";
 
+/** Trees we can plant on site. */
 export const PLANTING_KINDS: ItemKind[] = ["fruit", "ornamental"];
+/** Items sold one by one: trees and seed packets. */
+export const SELLABLE_KINDS: ItemKind[] = ["fruit", "ornamental", "seed"];
 export const BUSINESS_KINDS: ItemKind[] = ["indoor", "palm"];
 
 export type CatalogItem = {
@@ -107,6 +110,7 @@ export const KIND_LABELS: Record<ItemKind, { ar: string; en: string }> = {
   palm: { ar: "نخيل داخلي", en: "Indoor palm" },
   fruit: { ar: "شجر مثمر", en: "Fruit tree" },
   ornamental: { ar: "شجر زينة", en: "Ornamental tree" },
+  seed: { ar: "بذور", en: "Seeds" },
 };
 
 export const ORDER_STATUS_LABELS: Record<OrderStatus, { ar: string; en: string }> = {

@@ -54,7 +54,7 @@ export default async function BundlePage({ params }: Props) {
         <Thumb src={bundle.imageUrl} alt={name} service={bundle.service} priority className="aspect-[4/3] w-full rounded-[var(--radius-panel)]" />
 
         <div>
-          <h1 className="font-display text-4xl leading-tight md:text-5xl">{name}</h1>
+          <h1 className="font-display text-3xl leading-tight md:text-4xl">{name}</h1>
           <p className="mt-4 text-base leading-8 text-moss">{pick(lang, bundle.descriptionAr, bundle.descriptionEn)}</p>
 
           <dl className="mt-6 grid grid-cols-2 gap-4 border-y border-line-soft py-5 text-sm">
@@ -92,7 +92,10 @@ export default async function BundlePage({ params }: Props) {
             )}
             <p className="mt-2 text-sm leading-6 text-moss">
               {planting
-                ? t("التوصيل حسب منطقتك. الزراعة اختيارية وبتتحسب بالشجرة.", "Delivery is priced by area. Planting is optional and priced per tree.")
+                ? t(
+                    `التوصيل حسب منطقتك. زراعة شجر الباقة ${formatMoney(plantingFee ?? 0, lang)} لو اخترت الزراعة في الطلب.`,
+                    `Delivery is priced by area. Planting this bundle costs ${formatMoney(plantingFee ?? 0, lang)} if you choose planting for the order.`,
+                  )
                 : t("الأصص والتوزيع في المكان مشمولين. التوصيل حسب منطقتك.", "Pots and placement on site are included. Delivery is priced by area.")}
             </p>
           </div>
@@ -108,7 +111,6 @@ export default async function BundlePage({ params }: Props) {
                 price: bundle.price,
                 service: bundle.service,
               }}
-              plantingFeePerUnit={plantingFee}
             />
           </div>
 

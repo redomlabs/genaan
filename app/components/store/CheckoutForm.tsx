@@ -11,7 +11,8 @@ import { useLang } from "../LangProvider";
 import { useCart } from "./CartProvider";
 import { QuantityStepper } from "./QuantityStepper";
 import { Thumb } from "./Thumb";
-import { ShovelIcon, TrashIcon } from "../icons";
+import { TrashIcon } from "../icons";
+import { PlantingSwitch } from "./PlantingSwitch";
 
 type Fees = Pick<StoreSettings, "plantingFeePerTree" | "plantingVisitFee" | "freeDeliveryThreshold">;
 
@@ -28,13 +29,14 @@ export function CheckoutForm({
 }) {
   const { t, lang } = useLang();
   const router = useRouter();
-  const { entries, ready, setQuantity, setPlanting, remove, clear } = useCart();
+  const { entries, ready, setQuantity, plantAll, remove, clear } = useCart();
   const [zoneId, setZoneId] = useState<number | "">("");
   const [payment, setPayment] = useState<PaymentMethod>("cod");
   const [errors, setErrors] = useState<FieldErrors>({});
   const [pending, startTransition] = useTransition();
   const zone = zones.find((z) => z.id === zoneId) ?? null;
-  const quote = useMemo(() => computeQuote(entries, { bundles, items }, zone, fees), [entries, bundles, items, zone, fees]);
+  const lines = useMemo(() => entries.map(({ type, id, quantity }) => ({ type, id, quantity, planting: plantAll })), [entries, plantAll]);
+  const quote = useMemo(() => computeQuote(lines, { bundles, items }, zone, fees), [lines, bundles, items, zone, fees]);
 
   if (!ready) return <div className="mt-10 h-64 animate-pulse rounded-[var(--radius-panel)] bg-white" />;
 
@@ -55,7 +57,7 @@ export function CheckoutForm({
     setErrors({});
     startTransition(async () => {
       const result = await placeOrder({
-        cart: entries.map(({ type, id, quantity, planting }) => ({ type, id, quantity, planting })),
+        cart: lines,
         zoneId: Number(zoneId),
         name: String(data.get("name") ?? ""),
         phone: String(data.get("phone") ?? ""),
@@ -139,30 +141,22 @@ export function CheckoutForm({
                       <QuantityStepper size="sm" value={e.quantity} onChange={(q) => setQuantity(e.type, e.id, q)} label={name} />
                       {priced && <span className="num font-bold">{formatMoney(priced.lineTotal, lang)}</span>}
                     </div>
-                    {priced?.plantable && (
-                      <label className="mt-3 flex items-center gap-2 text-sm">
-                        <input
-                          type="checkbox"
-                          checked={e.planting}
-                          onChange={(ev) => setPlanting(e.type, e.id, ev.target.checked)}
-                          className="h-4 w-4 accent-[var(--color-harvest-deep)]"
-                        />
-                        <ShovelIcon size={16} className="text-harvest-deep" />
-                        {t("ازرعها لي", "Plant it for me")}
-                        {priced.withPlanting && (
-                          <span className="num text-moss">
-                            ({formatNumber(priced.trees, lang)} {t("شجرة", "trees")}
-                            {t("، ", ", ")}
-                            {formatMoney(priced.plantingFee, lang)})
-                          </span>
-                        )}
-                      </label>
-                    )}
                   </div>
                 </li>
               );
             })}
           </ul>
+          <div className="mt-2">
+            <PlantingSwitch
+              detail={
+                quote.treesToPlant > 0 && (
+                  <span className="num mt-1 block text-xs font-semibold text-harvest-deep">
+                    {t(`${formatNumber(quote.treesToPlant, lang)} شجرة، ${formatMoney(quote.plantingFee, lang)}`, `${quote.treesToPlant} trees, ${formatMoney(quote.plantingFee, lang)}`)}
+                  </span>
+                )
+              }
+            />
+          </div>
         </section>
 
         <section aria-labelledby="details-heading" className="rounded-[var(--radius-panel)] bg-white p-5 md:p-7">

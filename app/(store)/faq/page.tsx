@@ -53,7 +53,7 @@ export default async function FaqPage() {
   ];
   return (
     <div className="container-page max-w-3xl py-12 md:py-16">
-      <h1 className="font-display text-4xl md:text-5xl">{t("أسئلة متكررة", "Questions")}</h1>
+      <h1 className="font-display text-3xl md:text-4xl">{t("أسئلة متكررة", "Questions")}</h1>
       <div className="mt-8 divide-y divide-line rounded-[var(--radius-panel)] bg-white px-6">
         {questions.map(([q, a]) => (
           <details key={q} className="group py-5">

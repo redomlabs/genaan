@@ -50,6 +50,7 @@ export async function Footer() {
             <li><Link href="/business" className="hover:text-white">{t("باقات الشركات والعيادات", "Bundles for businesses")}</Link></li>
             <li><Link href="/planting" className="hover:text-white">{t("زراعة الحدائق والأراضي", "Garden and land planting")}</Link></li>
             <li><Link href="/planting#trees" className="hover:text-white">{t("أسعار الشجر", "Tree prices")}</Link></li>
+            <li><Link href="/seeds" className="hover:text-white">{t("البذور", "Seeds")}</Link></li>
             <li><Link href="/contact?topic=planting" className="hover:text-white">{t("مشروع زراعة كبير", "Large planting projects")}</Link></li>
           </ul>
         </nav>

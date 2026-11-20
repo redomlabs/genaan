@@ -12,7 +12,7 @@ export default async function TrackPage() {
   return (
     <div className="container-page grid gap-10 py-12 md:grid-cols-2 md:py-20">
       <div>
-        <h1 className="font-display text-4xl leading-tight md:text-5xl">{t("فين طلبي؟", "Where's my order?")}</h1>
+        <h1 className="font-display text-3xl leading-tight md:text-4xl">{t("فين طلبي؟", "Where's my order?")}</h1>
         <p className="mt-4 max-w-md text-base leading-8 text-moss">
           {t(
             "اكتب رقم الطلب اللي ظهر لك بعد ما طلبت، والموبايل اللي سجلته، وهتشوف حالة الطلب وتفاصيله.",

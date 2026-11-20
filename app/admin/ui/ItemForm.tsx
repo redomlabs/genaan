@@ -5,7 +5,7 @@ import { useState, useTransition } from "react";
 import { deleteItem, saveItem, type ItemInput } from "../actions";
 import { useLang } from "../../components/LangProvider";
 import { formatMoney, pick } from "../../lib/format";
-import { KIND_LABELS, PLANTING_KINDS, type CatalogItem, type ItemKind } from "../../lib/types";
+import { KIND_LABELS, PLANTING_KINDS, SELLABLE_KINDS, type CatalogItem, type ItemKind } from "../../lib/types";
 import { ImageField } from "./ImageField";
 
 export function ItemForm({
@@ -39,7 +39,8 @@ export function ItemForm({
     sortOrder: item ? String(item.sortOrder) : "0",
   });
   const set = <K extends keyof ItemInput>(key: K, value: ItemInput[K]) => setForm((f) => ({ ...f, [key]: value }));
-  const sellable = PLANTING_KINDS.includes(form.kind);
+  const sellable = SELLABLE_KINDS.includes(form.kind);
+  const plantable = PLANTING_KINDS.includes(form.kind);
   const back = () => {
     router.push(`/admin/catalog?kind=${form.kind}`);
     router.refresh();
@@ -61,7 +62,7 @@ export function ItemForm({
       <fieldset>
         <legend className="label">{t("النوع", "Type")}</legend>
         <div className="flex flex-wrap gap-2">
-          {(["fruit", "ornamental", "indoor", "palm"] as ItemKind[]).map((k) => (
+          {(["fruit", "ornamental", "seed", "indoor", "palm"] as ItemKind[]).map((k) => (
             <label key={k} className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-line px-3.5 py-1.5 text-sm has-[:checked]:border-forest has-[:checked]:bg-forest has-[:checked]:text-white">
               <input type="radio" name="kind" checked={form.kind === k} onChange={() => set("kind", k)} className="sr-only" />
               {pick(lang, KIND_LABELS[k].ar, KIND_LABELS[k].en)}
@@ -70,7 +71,9 @@ export function ItemForm({
         </div>
         <p className="hint">
           {sellable
-            ? t("بيتباع بالشجرة في كتالوج الزراعة، وممكن يدخل في باقات الزراعة.", "Sold per tree in the planting catalogue and usable in planting bundles.")
+            ? form.kind === "seed"
+              ? t("بيتباع بالباكت في صفحة البذور، من غير زراعة.", "Sold per packet on the seeds page, without planting.")
+              : t("بيتباع بالشجرة في كتالوج الزراعة، وممكن يدخل في باقات الزراعة.", "Sold per tree in the planting catalogue and usable in planting bundles.")
             : t("بيستخدم جوه باقات الأماكن بس، ومش بيتباع لوحده.", "Used inside workplace bundles only, not sold on its own.")}
         </p>
       </fieldset>
@@ -107,12 +110,12 @@ export function ItemForm({
       <div className="grid gap-5 sm:grid-cols-3">
         <div>
           <label htmlFor="i-price" className="label">
-            {t("السعر للشجرة (ج.م)", "Price per tree (EGP)")}
+            {form.kind === "seed" ? t("السعر للباكت (ج.م)", "Price per packet (EGP)") : t("السعر للشجرة (ج.م)", "Price per tree (EGP)")}
             {!sellable && <span className="font-normal text-moss"> {t("اختياري", "optional")}</span>}
           </label>
           <input id="i-price" type="number" min={0} inputMode="numeric" value={form.price} onChange={(e) => set("price", e.target.value)} required={sellable} className="field num" />
         </div>
-        {sellable && (
+        {plantable && (
           <>
             <div>
               <label htmlFor="i-fee" className="label">{t("رسوم زراعتها (ج.م)", "Planting fee (EGP)")}</label>

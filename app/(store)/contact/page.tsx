@@ -24,7 +24,7 @@ export default async function ContactPage({ searchParams }: { searchParams: Prom
 
   return (
     <div className="container-page py-12 md:py-16">
-      <h1 className="font-display max-w-3xl text-4xl leading-tight md:text-6xl">{t("احكي لنا عن مكانك أو أرضك.", "Tell us about your space or land.")}</h1>
+      <h1 className="font-display max-w-3xl text-3xl leading-tight md:text-5xl">{t("احكي لنا عن مكانك أو أرضك.", "Tell us about your space or land.")}</h1>
       <p className="mt-5 max-w-2xl text-base leading-8 text-moss">
         {t(
           "لو الباقات الجاهزة مش مناسبة، أو عندك مشروع كبير، ابعت التفاصيل وهنكلمك نتفق على المعاينة وعرض السعر.",

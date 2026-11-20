@@ -5,7 +5,7 @@ const u = (id: string) => `https://images.unsplash.com/${id}?auto=format&fit=cro
 
 type SeedItem = {
   slug: string;
-  kind: "indoor" | "palm" | "fruit" | "ornamental";
+  kind: "indoor" | "palm" | "fruit" | "ornamental" | "seed";
   nameAr: string;
   nameEn: string;
   descriptionAr?: string;
@@ -259,3 +259,17 @@ export const SEED_SETTINGS: Record<string, string> = {
   planting_visit_fee: "300",
   free_delivery_threshold: "0",
 };
+
+/** Seed packets, added once to stores that have none yet. Photos are added from the dashboard. */
+export const SEED_PACKETS: SeedItem[] = [
+  { slug: "seed-lawn-baladi", kind: "seed", nameAr: "بذور نجيلة بلدي", nameEn: "Baladi lawn grass seed", sizeAr: "كيلو يكفي حوالي ٢٥ م²", sizeEn: "1 kg covers about 25 m²", price: 180, descriptionAr: "تتحمل الشمس والحر وقلة الري.", descriptionEn: "Copes with sun, heat and little water.", imageUrl: "" },
+  { slug: "seed-lawn-english", kind: "seed", nameAr: "بذور نجيل إنجليزي", nameEn: "English ryegrass seed", sizeAr: "كيلو يكفي حوالي ٢٥ م²", sizeEn: "1 kg covers about 25 m²", price: 260, descriptionAr: "لون أخضر غامق، يتزرع في الخريف والشتا.", descriptionEn: "Deep green, sown in autumn and winter.", imageUrl: "" },
+  { slug: "seed-tomato", kind: "seed", nameAr: "بذور طماطم", nameEn: "Tomato seeds", sizeAr: "باكت ٥ جرام", sizeEn: "5 g packet", price: 45, imageUrl: "" },
+  { slug: "seed-cucumber", kind: "seed", nameAr: "بذور خيار", nameEn: "Cucumber seeds", sizeAr: "باكت ١٠ جرام", sizeEn: "10 g packet", price: 40, imageUrl: "" },
+  { slug: "seed-pepper", kind: "seed", nameAr: "بذور فلفل رومي", nameEn: "Bell pepper seeds", sizeAr: "باكت ٥ جرام", sizeEn: "5 g packet", price: 45, imageUrl: "" },
+  { slug: "seed-molokhia", kind: "seed", nameAr: "بذور ملوخية", nameEn: "Molokhia seeds", sizeAr: "باكت ٥٠ جرام", sizeEn: "50 g packet", price: 30, imageUrl: "" },
+  { slug: "seed-parsley", kind: "seed", nameAr: "بذور بقدونس", nameEn: "Parsley seeds", sizeAr: "باكت ٢٠ جرام", sizeEn: "20 g packet", price: 25, imageUrl: "" },
+  { slug: "seed-basil", kind: "seed", nameAr: "بذور ريحان", nameEn: "Basil seeds", sizeAr: "باكت ١٠ جرام", sizeEn: "10 g packet", price: 30, imageUrl: "" },
+  { slug: "seed-sunflower", kind: "seed", nameAr: "بذور عباد الشمس للزينة", nameEn: "Ornamental sunflower seeds", sizeAr: "باكت ٢٠ جرام", sizeEn: "20 g packet", price: 35, imageUrl: "" },
+  { slug: "seed-zinnia", kind: "seed", nameAr: "بذور زهور زينيا", nameEn: "Zinnia flower seeds", sizeAr: "باكت ٥ جرام", sizeEn: "5 g packet", price: 35, imageUrl: "" },
+];

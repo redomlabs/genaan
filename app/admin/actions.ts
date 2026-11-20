@@ -9,7 +9,7 @@ import { endSession, requireAdmin, startSession } from "../lib/auth";
 import { hashPassword, MIN_PASSWORD_LENGTH, verifyPassword } from "../lib/password";
 import { getLang } from "../lib/i18n-server";
 import { slugify } from "../lib/format";
-import { BUSINESS_AUDIENCES, BUSINESS_KINDS, PLANTING_AUDIENCES, PLANTING_KINDS, type ItemKind, type OrderStatus, type Service } from "../lib/types";
+import { BUSINESS_AUDIENCES, BUSINESS_KINDS, PLANTING_AUDIENCES, PLANTING_KINDS, SELLABLE_KINDS, type ItemKind, type OrderStatus, type Service } from "../lib/types";
 
 export type ActionResult = { ok?: boolean; error?: string; id?: number };
 
@@ -117,7 +117,7 @@ export type ItemInput = {
   sortOrder: string;
 };
 
-const KINDS: ItemKind[] = ["indoor", "palm", "fruit", "ornamental"];
+const KINDS: ItemKind[] = ["indoor", "palm", "fruit", "ornamental", "seed"];
 
 function safeImageUrl(value: string): string {
   const v = value.trim();
@@ -139,7 +139,7 @@ export async function saveItem(input: ItemInput): Promise<ActionResult> {
   if (!kind) return { error: await msg("اختار النوع.", "Choose a type.") };
   if (!nameAr || !nameEn) return { error: await msg("اكتب الاسم بالعربي والإنجليزي.", "Enter the name in Arabic and English.") };
   const price = int(input.price);
-  if (PLANTING_KINDS.includes(kind) && price === null) {
+  if (SELLABLE_KINDS.includes(kind) && price === null) {
     return { error: await msg("الشجر اللي بيتباع لازم يكون له سعر.", "Trees for sale need a price.") };
   }
   const areaValue = Number(input.areaPerUnit);

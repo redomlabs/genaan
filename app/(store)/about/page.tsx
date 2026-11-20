@@ -12,7 +12,7 @@ export default async function AboutPage() {
   const { t } = await getT();
   return (
     <div className="container-page py-12 md:py-16">
-      <h1 className="font-display max-w-3xl text-4xl leading-tight md:text-6xl">
+      <h1 className="font-display max-w-3xl text-3xl leading-tight md:text-5xl">
         {t("جنان يعني جناين. وده اللي بنعمله.", "Genaan means gardens. That's what we make.")}
       </h1>
       <div className="mt-10 grid items-start gap-10 md:grid-cols-2">

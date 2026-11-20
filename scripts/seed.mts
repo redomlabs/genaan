@@ -2,7 +2,7 @@ import { createClient } from "@libsql/client";
 import { count, eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/libsql";
 import * as schema from "../app/lib/db/schema";
-import { SEED_BUNDLES, SEED_ITEMS, SEED_SETTINGS, SEED_ZONES } from "./seed-data";
+import { SEED_BUNDLES, SEED_ITEMS, SEED_PACKETS, SEED_SETTINGS, SEED_ZONES } from "./seed-data";
 import { upsertAdminFromEnv } from "./admin-lib";
 
 const client = createClient({
@@ -17,6 +17,12 @@ if (items === 0) {
     SEED_ITEMS.map((item, index) => ({ ...item, sortOrder: index + 1 })),
   );
   console.log(`Added ${SEED_ITEMS.length} plants and trees`);
+}
+
+const [{ seeds }] = await db.select({ seeds: count() }).from(schema.catalogItems).where(eq(schema.catalogItems.kind, "seed"));
+if (seeds === 0) {
+  await db.insert(schema.catalogItems).values(SEED_PACKETS.map((item, index) => ({ ...item, sortOrder: 100 + index }))).onConflictDoNothing();
+  console.log(`Added ${SEED_PACKETS.length} seed packets`);
 }
 
 const [{ bundles }] = await db.select({ bundles: count() }).from(schema.bundles);

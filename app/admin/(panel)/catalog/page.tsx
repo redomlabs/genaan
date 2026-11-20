@@ -6,13 +6,14 @@ import { KIND_LABELS, type ItemKind } from "../../../lib/types";
 import { Empty, PageHeader } from "../../ui/bits";
 import { Thumb } from "../../../components/store/Thumb";
 
-const KINDS: ItemKind[] = ["fruit", "ornamental", "indoor", "palm"];
+const KINDS: ItemKind[] = ["fruit", "ornamental", "seed", "indoor", "palm"];
 
 export default async function AdminCatalogPage({ searchParams }: { searchParams: Promise<{ kind?: string }> }) {
   const [{ t, lang }, catalog, settings, { kind: kindParam }] = await Promise.all([getT(), getCatalog(true), getSettings(), searchParams]);
   const kind = KINDS.find((k) => k === kindParam) ?? "fruit";
   const list = catalog.filter((c) => c.kind === kind);
-  const sellable = kind === "fruit" || kind === "ornamental";
+  const sellable = kind === "fruit" || kind === "ornamental" || kind === "seed";
+  const plantable = kind === "fruit" || kind === "ornamental";
 
   return (
     <>
@@ -50,10 +51,10 @@ export default async function AdminCatalogPage({ searchParams }: { searchParams:
                   {sellable && (
                     <p className="num mt-0.5 text-sm">
                       <span className="font-semibold">{item.price !== null ? formatMoney(item.price, lang) : t("بدون سعر", "No price")}</span>
-                      <span className="text-moss">
+                      {plantable && (<span className="text-moss">
                         {" "}
                         {t("زراعة", "planting")} {formatMoney(item.plantingFee ?? settings.plantingFeePerTree, lang)}
-                      </span>
+                      </span>)}
                     </p>
                   )}
                 </div>

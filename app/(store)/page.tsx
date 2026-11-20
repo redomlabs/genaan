@@ -35,9 +35,9 @@ export default async function HomePage() {
           aria-hidden="true"
         />
         <div className="absolute inset-0 -z-10 bg-gradient-to-b from-forest-deep/80 via-forest-deep/55 to-forest-deep/95 lg:bg-gradient-to-r rtl:lg:bg-gradient-to-l lg:from-forest-deep/92 lg:via-forest-deep/60 lg:to-forest-deep/20" aria-hidden="true" />
-        <div className="container-page flex min-h-[92svh] flex-col justify-end pb-10 pt-28 md:pb-14">
+        <div className="container-page flex min-h-[86svh] flex-col justify-end pb-12 pt-28 md:pb-16">
           <div className="hero-rise max-w-3xl">
-            <h1 className="font-display text-[2.6rem] leading-[1.1] sm:text-6xl md:text-7xl">
+            <h1 className="font-display text-4xl leading-[1.15] sm:text-5xl md:text-6xl">
               {t("خضرة تجهّز مكان شغلك، وشجر نزرعه في أرضك.", "Greenery for your workplace. Trees planted in your land.")}
             </h1>
             <p className="mt-6 max-w-xl text-base leading-8 text-white/85 md:text-lg">
@@ -48,41 +48,32 @@ export default async function HomePage() {
             </p>
           </div>
 
-          <div className="mt-10 grid gap-3 md:grid-cols-2">
+          <div className="mt-8 grid max-w-xl gap-2.5 sm:grid-cols-2">
             <Link
               href="/business"
-              className="group flex items-center gap-5 rounded-[var(--radius-card)] bg-white/95 p-5 text-forest transition-colors hover:bg-white md:p-6"
+              className="group flex items-center gap-3 rounded-2xl bg-white/95 hover:bg-white py-2.5 ps-2.5 pe-4 text-forest transition-colors"
             >
-              <span className="grid h-14 w-14 shrink-0 place-items-center rounded-2xl bg-mist text-canopy">
-                <BuildingIcon size={28} />
+              <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-mist text-canopy">
+                <BuildingIcon size={19} />
               </span>
-              <span className="min-w-0 flex-1">
-                <span className="block text-lg font-bold">{t("لمكان شغلك", "For your workplace")}</span>
-                <span className="block text-sm leading-6 text-moss">
-                  {t(
-                    `${formatNumber(business.length, lang)} باقات للشركات والعيادات والمحلات`,
-                    `${business.length} bundles for offices, clinics and shops`,
-                  )}
-                  {minBusiness !== null && <span className="num">{t(`، من ${formatMoney(minBusiness, lang)}`, `, from ${formatMoney(minBusiness, lang)}`)}</span>}
-                </span>
+              <span className="min-w-0">
+                <span className="block text-sm font-bold">{t("لمكان شغلك", "For your workplace")}</span>
+                <span className="num block text-xs text-moss">{minBusiness !== null ? t(`باقات من ${formatMoney(minBusiness, lang)}`, `Bundles from ${formatMoney(minBusiness, lang)}`) : t("باقات نباتات", "Plant bundles")}</span>
               </span>
-              <ChevronIcon className="shrink-0 text-moss transition-transform group-hover:translate-x-1 rtl:group-hover:-translate-x-1" />
+              <ChevronIcon size={16} className="ms-auto shrink-0 text-moss" />
             </Link>
             <Link
               href="/planting"
-              className="group flex items-center gap-5 rounded-[var(--radius-card)] bg-harvest-soft p-5 text-forest transition-colors hover:bg-[#fbf3e3] md:p-6"
+              className="group flex items-center gap-3 rounded-2xl bg-harvest-soft hover:bg-[#fbf3e3] py-2.5 ps-2.5 pe-4 text-forest transition-colors"
             >
-              <span className="grid h-14 w-14 shrink-0 place-items-center rounded-2xl bg-white text-harvest-deep">
-                <TreeIcon size={28} />
+              <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-white text-harvest-deep">
+                <TreeIcon size={19} />
               </span>
-              <span className="min-w-0 flex-1">
-                <span className="block text-lg font-bold">{t("لحديقتك أو أرضك", "For your garden or land")}</span>
-                <span className="block text-sm leading-6 text-moss">
-                  {t("شجر مثمر وزينة مع الزراعة", "Fruit and ornamental trees, planted for you")}
-                  {minTree !== null && <span className="num">{t(`، الشجرة من ${formatMoney(minTree, lang)}`, `, from ${formatMoney(minTree, lang)} a tree`)}</span>}
-                </span>
+              <span className="min-w-0">
+                <span className="block text-sm font-bold">{t("لحديقتك أو أرضك", "For your garden or land")}</span>
+                <span className="num block text-xs text-moss">{minTree !== null ? t(`الشجرة من ${formatMoney(minTree, lang)}`, `Trees from ${formatMoney(minTree, lang)}`) : t("شجر وزراعة", "Trees and planting")}</span>
               </span>
-              <ChevronIcon className="shrink-0 text-moss transition-transform group-hover:translate-x-1 rtl:group-hover:-translate-x-1" />
+              <ChevronIcon size={16} className="ms-auto shrink-0 text-moss" />
             </Link>
           </div>
         </div>
@@ -91,7 +82,7 @@ export default async function HomePage() {
       {/* Area finder */}
       <section className="container-page py-16 md:py-24">
         <div className="mb-8 max-w-2xl">
-          <h2 className="font-display text-3xl md:text-5xl">{t("قولنا المساحة، نقولك الباقة.", "Tell us the size. We'll suggest the bundle.")}</h2>
+          <h2 className="font-display text-2xl md:text-4xl">{t("قولنا المساحة، نقولك الباقة.", "Tell us the size. We'll suggest the bundle.")}</h2>
           <p className="mt-4 text-base leading-8 text-moss">
             {t(
               "كل باقة متصممة لمساحة معينة. حرّك المسطرة لمساحة مكانك أو أرضك وشوف الباقة اللي تناسبها وسعرها.",
@@ -107,7 +98,7 @@ export default async function HomePage() {
         <section className="container-page pb-16 md:pb-24">
           <div className="mb-8 flex flex-col justify-between gap-4 md:flex-row md:items-end">
             <div className="max-w-2xl">
-              <h2 className="font-display text-3xl md:text-5xl">{t("باقات جاهزة لمكان شغلك", "Ready bundles for your workplace")}</h2>
+              <h2 className="font-display text-2xl md:text-4xl">{t("باقات جاهزة لمكان شغلك", "Ready bundles for your workplace")}</h2>
               <p className="mt-4 text-base leading-8 text-moss">
                 {t(
                   "نباتات ونخيل داخلي مختارة تتحمل التكييف والإضاءة الضعيفة، مع أصص متناسقة وتوزيع في المكان.",
@@ -132,7 +123,7 @@ export default async function HomePage() {
         <section className="bg-harvest-soft/60 py-16 md:py-24">
           <div className="container-page grid gap-10 lg:grid-cols-[1fr_1.3fr]">
             <div>
-              <h2 className="font-display text-3xl md:text-5xl">{t("أسعار الشجر، بالشجرة.", "Tree prices, tree by tree.")}</h2>
+              <h2 className="font-display text-2xl md:text-4xl">{t("أسعار الشجر، بالشجرة.", "Tree prices, tree by tree.")}</h2>
               <p className="mt-4 max-w-md text-base leading-8 text-moss">
                 {t(
                   "اختار العدد اللي محتاجه من كل نوع، أو خد باقة زراعة جاهزة على قد مساحتك. لو عايزنا نزرعها، رسوم الزراعة بتتحسب بالشجرة.",
@@ -189,7 +180,7 @@ export default async function HomePage() {
 
       {/* How an order works */}
       <section className="container-page py-16 md:py-24">
-        <h2 className="font-display max-w-2xl text-3xl md:text-5xl">{t("من الطلب لحد ما الخضرة توصل", "From your order to planted greenery")}</h2>
+        <h2 className="font-display max-w-2xl text-2xl md:text-4xl">{t("من الطلب لحد ما الخضرة توصل", "From your order to planted greenery")}</h2>
         <ol className="mt-10 grid gap-8 md:grid-cols-4">
           {[
             [t("اختار", "Choose"), t("باقة على قد مساحتك، أو شجر بالعدد اللي محتاجه.", "A bundle sized to your space, or trees in the numbers you need.")],

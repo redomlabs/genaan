@@ -24,7 +24,7 @@ export const catalogItems = sqliteTable(
   {
     id: integer("id").primaryKey({ autoIncrement: true }),
     slug: text("slug").notNull().unique(),
-    kind: text("kind", { enum: ["indoor", "palm", "fruit", "ornamental"] }).notNull(),
+    kind: text("kind", { enum: ["indoor", "palm", "fruit", "ornamental", "seed"] }).notNull(),
     nameAr: text("name_ar").notNull(),
     nameEn: text("name_en").notNull(),
     descriptionAr: text("description_ar").notNull().default(""),

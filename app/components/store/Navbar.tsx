@@ -32,6 +32,7 @@ export function Navbar() {
     { href: "/business", label: t("باقات الأماكن", "Workplace bundles") },
     { href: "/planting", label: t("زراعة الحدائق والأراضي", "Garden & land planting") },
     { href: "/planting#trees", label: t("أسعار الشجر", "Tree prices") },
+    { href: "/seeds", label: t("البذور", "Seeds") },
     { href: "/track", label: t("تتبع طلبك", "Track an order") },
     { href: "/contact", label: t("تواصل معنا", "Contact") },
   ];

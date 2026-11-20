@@ -19,7 +19,7 @@ export default async function EditItemPage({
   const isNew = id === "new";
   const [item] = isNew ? [null] : await getDb().select().from(schema.catalogItems).where(eq(schema.catalogItems.id, Number(id))).limit(1);
   if (!isNew && !item) notFound();
-  const defaultKind = (["indoor", "palm", "fruit", "ornamental"] as ItemKind[]).find((k) => k === kind) ?? "fruit";
+  const defaultKind = (["indoor", "palm", "fruit", "ornamental", "seed"] as ItemKind[]).find((k) => k === kind) ?? "fruit";
 
   return (
     <>

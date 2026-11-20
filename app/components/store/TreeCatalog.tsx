@@ -3,115 +3,120 @@
 import { useMemo, useState } from "react";
 import { formatMoney, formatNumber } from "../../lib/format";
 import { treesForArea } from "../../lib/pricing";
-import { KIND_LABELS, type CatalogItem } from "../../lib/types";
+import { KIND_LABELS, PLANTING_KINDS, type CatalogItem, type ItemKind } from "../../lib/types";
 import { useLang } from "../LangProvider";
 import { AddWithOptions } from "./AddToCart";
 import { Thumb } from "./Thumb";
 
-type Filter = "all" | "fruit" | "ornamental";
+type Filter = "all" | ItemKind;
 
-function spacing(areaPerUnit: number | null, lang: "ar" | "en") {
-  if (!areaPerUnit) return null;
-  const side = Math.round(Math.sqrt(areaPerUnit) * 10) / 10;
-  return lang === "ar" ? `مسافة ${formatNumber(side, lang)}×${formatNumber(side, lang)} م` : `${side} × ${side} m spacing`;
-}
-
-export function TreeCatalog({ trees, defaultPlantingFee }: { trees: CatalogItem[]; defaultPlantingFee: number }) {
+/** Priced items sold one by one: trees (with type filter and area estimate) or seed packets. */
+export function TreeCatalog({
+  trees,
+  defaultPlantingFee,
+  mode = "trees",
+}: {
+  trees: CatalogItem[];
+  defaultPlantingFee: number;
+  mode?: "trees" | "seeds";
+}) {
   const { t, lang } = useLang();
   const [filter, setFilter] = useState<Filter>("all");
   const [area, setArea] = useState<number | "">("");
-  const shown = useMemo(() => trees.filter((tree) => filter === "all" || tree.kind === filter), [trees, filter]);
-  const counts = {
-    all: trees.length,
-    fruit: trees.filter((x) => x.kind === "fruit").length,
-    ornamental: trees.filter((x) => x.kind === "ornamental").length,
-  };
+  const isTrees = mode === "trees";
+  const shown = useMemo(() => trees.filter((x) => filter === "all" || x.kind === filter), [trees, filter]);
+  const filters: Filter[] = ["all", "fruit", "ornamental"];
 
   return (
     <div>
-      <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-        <div role="group" aria-label={t("نوع الشجر", "Tree type")} className="flex flex-wrap gap-2">
-          {(["all", "fruit", "ornamental"] as Filter[]).map((f) => (
-            <button
-              key={f}
-              type="button"
-              aria-pressed={filter === f}
-              onClick={() => setFilter(f)}
-              className={`rounded-full border px-4 py-2 text-sm font-semibold transition-colors ${
-                filter === f ? "border-forest bg-forest text-white" : "border-line bg-white text-forest hover:border-canopy"
-              }`}
-            >
-              {f === "all" ? t("الكل", "All") : f === "fruit" ? t("شجر مثمر", "Fruit trees") : t("شجر زينة", "Ornamental")}{" "}
-              <span className="num opacity-70">{formatNumber(counts[f], lang)}</span>
-            </button>
-          ))}
+      {isTrees && (
+        <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+          <div role="group" aria-label={t("نوع الشجر", "Tree type")} className="flex flex-wrap gap-2">
+            {filters.map((f) => (
+              <button
+                key={f}
+                type="button"
+                aria-pressed={filter === f}
+                onClick={() => setFilter(f)}
+                className={`rounded-full border px-3.5 py-1.5 text-sm font-semibold transition-colors ${
+                  filter === f ? "border-forest bg-forest text-white" : "border-line bg-white text-forest hover:border-canopy"
+                }`}
+              >
+                {f === "all" ? t("الكل", "All") : f === "fruit" ? t("شجر مثمر", "Fruit trees") : t("شجر زينة", "Ornamental")}{" "}
+                <span className="num opacity-70">
+                  {formatNumber(f === "all" ? trees.length : trees.filter((x) => x.kind === f).length, lang)}
+                </span>
+              </button>
+            ))}
+          </div>
+          <label className="flex items-center gap-3 text-sm text-moss">
+            {t("احسب كام شجرة تكفي مساحة", "Estimate trees for an area of")}
+            <input
+              type="number"
+              inputMode="numeric"
+              min={1}
+              placeholder={t("م²", "m²")}
+              value={area}
+              onChange={(e) => setArea(e.target.value === "" ? "" : Math.max(1, Number(e.target.value)))}
+              className="field num !min-h-9 w-24 !py-1"
+            />
+          </label>
         </div>
-        <label className="flex items-center gap-3 text-sm text-moss">
-          {t("احسب كام شجرة تكفي مساحة", "Estimate trees for an area of")}
-          <input
-            type="number"
-            inputMode="numeric"
-            min={1}
-            placeholder={t("م²", "m²")}
-            value={area}
-            onChange={(e) => setArea(e.target.value === "" ? "" : Math.max(1, Number(e.target.value)))}
-            className="field num !min-h-10 w-28 !py-1.5"
-          />
-        </label>
-      </div>
+      )}
 
       {shown.length === 0 ? (
-        <p className="mt-8 rounded-[var(--radius-card)] border border-dashed border-line p-10 text-center text-moss">
-          {t("مفيش شجر في القسم ده دلوقتي.", "No trees in this section right now.")}
+        <p className="mt-6 rounded-[var(--radius-card)] border border-dashed border-line p-10 text-center text-moss">
+          {isTrees ? t("مفيش شجر في القسم ده دلوقتي.", "No trees in this section right now.") : t("البذور هتنزل قريب.", "Seeds are coming soon.")}
         </p>
       ) : (
-        <ul className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {shown.map((tree) => {
-            const name = lang === "ar" ? tree.nameAr : tree.nameEn;
-            const fits = area === "" ? null : treesForArea(area, tree.areaPerUnit);
-            const fee = tree.plantingFee ?? defaultPlantingFee;
+        <ul className={`grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 ${isTrees ? "mt-6" : ""}`}>
+          {shown.map((item) => {
+            const name = lang === "ar" ? item.nameAr : item.nameEn;
+            const plantable = PLANTING_KINDS.includes(item.kind);
+            const fits = area === "" ? null : treesForArea(area, item.areaPerUnit);
             return (
-              <li key={tree.id} className="flex flex-col overflow-hidden rounded-[var(--radius-card)] border border-line-soft bg-white">
-                <Thumb src={tree.imageUrl} alt={name} service="planting" className="aspect-[4/3] w-full" />
+              <li key={item.id} className="flex flex-col overflow-hidden rounded-[var(--radius-card)] border border-line-soft bg-white">
+                <Thumb src={item.imageUrl} alt={name} service={item.kind === "seed" ? "business" : "planting"} className="aspect-[4/3] w-full" />
                 <div className="flex flex-1 flex-col p-4">
-                  <p className={`text-xs font-bold ${tree.kind === "fruit" ? "text-harvest-deep" : "text-canopy"}`}>
-                    {lang === "ar" ? KIND_LABELS[tree.kind].ar : KIND_LABELS[tree.kind].en}
+                  <p className={`text-xs font-bold ${item.kind === "ornamental" ? "text-canopy" : "text-harvest-deep"}`}>
+                    {lang === "ar" ? KIND_LABELS[item.kind].ar : KIND_LABELS[item.kind].en}
                   </p>
-                  <h3 className="mt-1 text-lg font-bold leading-6">{name}</h3>
-                  {(tree.sizeAr || tree.sizeEn) && (
-                    <p className="mt-1 text-sm text-moss">{lang === "ar" ? tree.sizeAr : tree.sizeEn}</p>
-                  )}
-                  {(tree.descriptionAr || tree.descriptionEn) && (
-                    <p className="mt-2 text-sm leading-6 text-moss">{lang === "ar" ? tree.descriptionAr : tree.descriptionEn}</p>
+                  <h3 className="mt-0.5 text-base font-bold leading-6">{name}</h3>
+                  {(item.sizeAr || item.sizeEn) && <p className="text-sm text-moss">{lang === "ar" ? item.sizeAr : item.sizeEn}</p>}
+                  {(item.descriptionAr || item.descriptionEn) && (
+                    <p className="mt-1.5 text-sm leading-6 text-moss">{lang === "ar" ? item.descriptionAr : item.descriptionEn}</p>
                   )}
                   <div className="mt-auto pt-4">
-                    <p className="num text-xl font-bold">
-                      {formatMoney(tree.price ?? 0, lang)}
-                      <span className="text-sm font-normal text-moss"> {t("للشجرة", "per tree")}</span>
-                    </p>
-                    {spacing(tree.areaPerUnit, lang) && <p className="num mt-0.5 text-xs text-moss">{spacing(tree.areaPerUnit, lang)}</p>}
+                    <div className="mb-3 flex items-baseline justify-between gap-2">
+                      <p className="num text-lg font-bold">
+                        {formatMoney(item.price ?? 0, lang)}
+                        <span className="text-xs font-normal text-moss"> {isTrees ? t("للشجرة", "each") : t("للباكت", "a packet")}</span>
+                      </p>
+                      {plantable && (
+                        <p className="num text-xs text-moss">
+                          {t(`زراعة ${formatMoney(item.plantingFee ?? defaultPlantingFee, lang)}`, `Planting ${formatMoney(item.plantingFee ?? defaultPlantingFee, lang)}`)}
+                        </p>
+                      )}
+                    </div>
                     {fits !== null && (
-                      <p className="num mt-2 rounded-lg bg-mist px-2.5 py-1.5 text-xs font-semibold text-canopy">
+                      <p className="num mb-3 rounded-lg bg-mist px-2.5 py-1.5 text-xs font-semibold text-canopy">
                         {fits > 0
                           ? t(`مساحتك تكفي حوالي ${formatNumber(fits, lang)} شجرة`, `Your area fits about ${formatNumber(fits, lang)} trees`)
                           : t("المساحة أصغر من مسافة شجرة واحدة", "The area is smaller than one tree's spacing")}
                       </p>
                     )}
-                    <div className="mt-3">
-                      <AddWithOptions
-                        product={{
-                          type: "item",
-                          id: tree.id,
-                          nameAr: tree.nameAr,
-                          nameEn: tree.nameEn,
-                          imageUrl: tree.imageUrl,
-                          price: tree.price ?? 0,
-                          service: "planting",
-                        }}
-                        plantingFeePerUnit={fee}
-                        compact
-                      />
-                    </div>
+                    <AddWithOptions
+                      plantable={plantable}
+                      product={{
+                        type: "item",
+                        id: item.id,
+                        nameAr: item.nameAr,
+                        nameEn: item.nameEn,
+                        imageUrl: item.imageUrl,
+                        price: item.price ?? 0,
+                        service: "planting",
+                      }}
+                    />
                   </div>
                 </div>
               </li>

@@ -100,7 +100,7 @@ export function AreaFinder({
             {planting ? t("مساحة الأرض اللي هتزرعها", "Area you want planted") : t("مساحة المكان اللي هتتجهز", "Floor area to furnish with plants")}
           </label>
           <p className="mt-2 flex items-baseline gap-3" aria-live="polite">
-            <span className="font-display num text-6xl leading-none md:text-7xl">{formatAreaParts(area, lang).value}</span>
+            <span className="font-display num text-5xl leading-none md:text-6xl">{formatAreaParts(area, lang).value}</span>
             <span className="text-xl font-semibold text-white/80">{formatAreaParts(area, lang).unit}</span>
           </p>
           {planting && area >= 500 && area < FEDDAN_M2 && (

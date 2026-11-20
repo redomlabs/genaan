@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { getBundles, getCatalog, getSettings, getZones } from "../../lib/data";
 import { getLang, getT } from "../../lib/i18n-server";
 import { pick } from "../../lib/format";
-import { PLANTING_KINDS } from "../../lib/types";
+import { SELLABLE_KINDS } from "../../lib/types";
 import { CheckoutForm } from "../../components/store/CheckoutForm";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -20,10 +20,10 @@ export default async function CheckoutPage() {
   ]);
   return (
     <div className="container-page py-10 md:py-14">
-      <h1 className="font-display text-4xl md:text-5xl">{t("إتمام الطلب", "Checkout")}</h1>
+      <h1 className="font-display text-3xl md:text-4xl">{t("إتمام الطلب", "Checkout")}</h1>
       <CheckoutForm
         bundles={bundles}
-        items={catalog.filter((c) => PLANTING_KINDS.includes(c.kind))}
+        items={catalog.filter((c) => SELLABLE_KINDS.includes(c.kind))}
         zones={zones}
         fees={{
           plantingFeePerTree: settings.plantingFeePerTree,

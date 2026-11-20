@@ -1,5 +1,6 @@
 import {
   PLANTING_KINDS,
+  SELLABLE_KINDS,
   type Bundle,
   type CartLine,
   type CatalogItem,
@@ -71,7 +72,7 @@ export function computeQuote(
   const bundles = new Map(catalog.bundles.filter((b) => b.isActive).map((b) => [b.id, b]));
   const items = new Map(
     catalog.items
-      .filter((i) => i.isActive && i.price !== null && PLANTING_KINDS.includes(i.kind))
+      .filter((i) => i.isActive && i.price !== null && SELLABLE_KINDS.includes(i.kind))
       .map((i) => [i.id, i]),
   );
   const lines: PricedLine[] = [];
@@ -109,6 +110,8 @@ export function computeQuote(
         unavailable.push(entry);
         continue;
       }
+      const canPlant = PLANTING_KINDS.includes(item.kind);
+      const plant = canPlant && entry.planting;
       lines.push({
         type: "item",
         id: item.id,
@@ -117,10 +120,10 @@ export function computeQuote(
         imageUrl: item.imageUrl,
         unitPrice: item.price,
         quantity,
-        plantable: true,
-        withPlanting: entry.planting,
-        trees: entry.planting ? quantity : 0,
-        plantingFee: entry.planting ? treePlantingFee(item.plantingFee, settings) * quantity : 0,
+        plantable: canPlant,
+        withPlanting: plant,
+        trees: plant ? quantity : 0,
+        plantingFee: plant ? treePlantingFee(item.plantingFee, settings) * quantity : 0,
         lineTotal: item.price * quantity,
         contents: [],
       });

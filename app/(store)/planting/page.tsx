@@ -34,7 +34,7 @@ export default async function PlantingPage() {
   return (
     <>
       <header className="container-page pb-10 pt-12 md:pt-16">
-        <h1 className="font-display max-w-3xl text-4xl leading-tight md:text-6xl">
+        <h1 className="font-display max-w-3xl text-3xl leading-tight md:text-5xl">
           {t("نزرع حديقتك أو أرضك بالشجر.", "We plant your garden or land with trees.")}
         </h1>
         <p className="mt-5 max-w-2xl text-base leading-8 text-moss md:text-lg">
@@ -87,7 +87,7 @@ export default async function PlantingPage() {
 
       <section id="trees" className="scroll-mt-20 border-t border-line-soft bg-white py-16" aria-labelledby="trees-heading">
         <div className="container-page">
-          <h2 id="trees-heading" className="font-display text-3xl md:text-5xl">
+          <h2 id="trees-heading" className="font-display text-2xl md:text-4xl">
             {t("كتالوج الشجر", "Tree catalogue")}
           </h2>
           <p className="mt-3 mb-8 max-w-2xl text-sm leading-7 text-moss">
